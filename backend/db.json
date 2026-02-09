@@ -1,0 +1,215 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "name": "Aarav Patel",
+      "role": "Admin",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Aarav"
+    },
+    {
+      "id": "u2",
+      "name": "Diya Sharma",
+      "role": "Manager",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Diya"
+    },
+    {
+      "id": "intern1",
+      "name": "Rahul Intern",
+      "role": "Intern",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=RahulIntern"
+    },
+    {
+      "id": "u3",
+      "name": "Kabir Singh",
+      "role": "Member",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Kabir"
+    },
+    {
+      "id": "u4",
+      "name": "Aditi Rao",
+      "role": "Member",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Aditi"
+    },
+    {
+      "name": "K Rajesh Kumar",
+      "role": "Intern",
+      "id": "u1770612887671",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=K Rajesh Kumar"
+    }
+  ],
+  "tasks": [
+    {
+      "title": "test1",
+      "description": "test1",
+      "category": "Ops",
+      "priority": "High",
+      "assigneeId": "intern1",
+      "dueDate": "2026-02-07",
+      "status": "In Progress",
+      "createdAt": "2026-02-06T09:49:17.024Z",
+      "createdBy": "u1",
+      "comments": [
+        {
+          "id": "1770612506382",
+          "userId": "u1",
+          "text": "hiii\n",
+          "timestamp": "2026-02-09T04:48:26.382Z"
+        }
+      ],
+      "logs": [
+        {
+          "action": "Assignment",
+          "userId": "u1",
+          "timestamp": "2026-02-09T04:48:02.295Z",
+          "details": "Assignees updated"
+        },
+        {
+          "action": "Assignment",
+          "userId": "u1",
+          "timestamp": "2026-02-09T04:48:04.999Z",
+          "details": "Assignees updated"
+        },
+        {
+          "action": "Assignment",
+          "userId": "u1",
+          "timestamp": "2026-02-09T04:48:07.506Z",
+          "details": "Assignees updated"
+        },
+        {
+          "action": "Status Change",
+          "userId": "u1",
+          "timestamp": "2026-02-09T04:48:12.227Z",
+          "details": "Status changed to In Progress"
+        },
+        {
+          "action": "Comment",
+          "userId": "u1",
+          "timestamp": "2026-02-09T04:48:26.382Z",
+          "details": "Comment added"
+        }
+      ],
+      "id": 1,
+      "assigneeIds": [
+        "u1",
+        "u2"
+      ]
+    },
+    {
+      "title": "test for kabir",
+      "description": "",
+      "category": "Bug",
+      "priority": "Medium",
+      "assigneeId": "u3",
+      "dueDate": "2026-03-07",
+      "status": "Pending",
+      "createdAt": "2026-02-06T09:50:55.914Z",
+      "createdBy": "u2",
+      "comments": [
+        {
+          "id": "1770394366019",
+          "userId": "u1",
+          "text": "hiii\n",
+          "timestamp": "2026-02-06T16:12:46.019Z"
+        },
+        {
+          "id": "1770612525630",
+          "userId": "u2",
+          "text": "hello\n",
+          "timestamp": "2026-02-09T04:48:45.630Z"
+        }
+      ],
+      "logs": [
+        {
+          "action": "Status Change",
+          "userId": "u1",
+          "timestamp": "2026-02-06T16:12:32.935Z",
+          "details": "Status changed to In Progress"
+        },
+        {
+          "action": "Status Change",
+          "userId": "u1",
+          "timestamp": "2026-02-06T16:12:35.604Z",
+          "details": "Status changed to Blocked"
+        },
+        {
+          "action": "Status Change",
+          "userId": "u1",
+          "timestamp": "2026-02-06T16:12:38.366Z",
+          "details": "Status changed to Completed"
+        },
+        {
+          "action": "Status Change",
+          "userId": "u1",
+          "timestamp": "2026-02-06T16:12:41.235Z",
+          "details": "Status changed to Pending"
+        },
+        {
+          "action": "Comment",
+          "userId": "u1",
+          "timestamp": "2026-02-06T16:12:46.019Z",
+          "details": "Comment added"
+        },
+        {
+          "action": "Status Change",
+          "userId": "u1",
+          "timestamp": "2026-02-06T16:12:55.054Z",
+          "details": "Status changed to In Progress"
+        },
+        {
+          "action": "Status Change",
+          "userId": "u1",
+          "timestamp": "2026-02-09T04:47:44.023Z",
+          "details": "Status changed to Blocked"
+        },
+        {
+          "action": "Status Change",
+          "userId": "u1",
+          "timestamp": "2026-02-09T04:47:47.197Z",
+          "details": "Status changed to Pending"
+        },
+        {
+          "action": "Comment",
+          "userId": "u2",
+          "timestamp": "2026-02-09T04:48:45.630Z",
+          "details": "Comment added"
+        }
+      ],
+      "id": 2,
+      "assigneeIds": [
+        "u3"
+      ]
+    },
+    {
+      "title": "test for new intern",
+      "description": "",
+      "category": "Bug",
+      "priority": "High",
+      "assigneeIds": [
+        "u1770612887671"
+      ],
+      "dueDate": "2026-02-25",
+      "status": "Pending",
+      "createdAt": "2026-02-09T04:55:12.688Z",
+      "createdBy": "u2",
+      "comments": [],
+      "logs": [],
+      "id": 3
+    }
+  ],
+  "notifications": [
+    {
+      "id": "17706124849990.023215732271423928",
+      "userId": "u1",
+      "text": "You were assigned to task: test1",
+      "read": false,
+      "timestamp": "2026-02-09T04:48:04.999Z"
+    },
+    {
+      "id": "17706124875060.852574015765216",
+      "userId": "u2",
+      "text": "You were assigned to task: test1",
+      "read": false,
+      "timestamp": "2026-02-09T04:48:07.506Z"
+    }
+  ]
+}
