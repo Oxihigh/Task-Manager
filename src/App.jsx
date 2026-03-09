@@ -7,8 +7,8 @@ import Dashboard from './pages/Dashboard';
 import Tasks from './pages/Tasks';
 import Kanban from './pages/Kanban';
 import Members from './pages/Members';
+import Chat from './pages/Chat';
 import Login from './pages/Login';
-
 
 function AppContent() {
   const { currentUser, loading } = useUser();
@@ -25,6 +25,7 @@ function AppContent() {
           <Route path="tasks" element={<Tasks />} />
           <Route path="kanban" element={<Kanban />} />
           <Route path="members" element={<Members />} />
+          <Route path="chat" element={<Chat />} />
 
           <Route path="*" element={<div>Not Found</div>} />
         </Route>

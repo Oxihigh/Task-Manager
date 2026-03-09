@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, CheckSquare, Users, PlusCircle, LogOut } from 'lucide-react';
+import { LayoutDashboard, CheckSquare, Users, PlusCircle, LogOut, MessageSquare } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/button';
 import { useTasks } from '../../context/TaskContext';
@@ -15,6 +15,7 @@ export function Sidebar() {
         { label: 'Tasks', icon: CheckSquare, path: '/tasks' },
         { label: 'Kanban', icon: CheckSquare, path: '/kanban' },
         { label: 'Members', icon: Users, path: '/members' },
+        { label: 'Chat', icon: MessageSquare, path: '/chat' },
     ];
 
     return (

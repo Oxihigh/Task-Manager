@@ -9,20 +9,21 @@ import { Button } from '../components/ui/button';
 import { Plus } from 'lucide-react';
 
 export default function Members() {
-    const { users } = useUser();
+    const { users, currentUser } = useUser();
     const { tasks, searchQuery } = useTasks(); // Required to calc stats
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [selectedMember, setSelectedMember] = useState(null);
+    const isAdmin = currentUser?.role === 'Admin';
 
     // Calculate stats for each member
     const membersWithStats = useMemo(() => {
         return users
             .filter(user =>
-                user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                user.role.toLowerCase().includes(searchQuery.toLowerCase())
+                user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                user.role?.toLowerCase().includes(searchQuery.toLowerCase())
             )
             .map(user => {
-                const userTasks = tasks.filter(t => t.assigneeId === user.id);
+                const userTasks = tasks.filter(t => (t.assigneeIds || []).includes(user.id));
                 const total = userTasks.length;
                 const completed = userTasks.filter(t => t.status === 'Completed').length;
                 const rate = total === 0 ? 0 : Math.round((completed / total) * 100);
@@ -37,10 +38,12 @@ export default function Members() {
                     <h2 className="text-3xl font-bold tracking-tight">Team Members</h2>
                     <p className="text-slate-500">Manage your team and view performance</p>
                 </div>
-                <Button className="gap-2" onClick={() => setIsAddModalOpen(true)}>
-                    <Plus className="w-4 h-4" />
-                    Add Member
-                </Button>
+                {isAdmin && (
+                    <Button className="gap-2" onClick={() => setIsAddModalOpen(true)}>
+                        <Plus className="w-4 h-4" />
+                        Add Member
+                    </Button>
+                )}
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

@@ -6,23 +6,19 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 
 export default function Login() {
-    const { users, login } = useUser();
-    const [username, setUsername] = useState('');
+    const { login } = useUser();
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleLogin = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
-        const user = users.find(
-            u => u.name.toLowerCase() === username.trim().toLowerCase()
-        );
-
-        if (user) {
-            login(user.id);
-        } else {
-            setError('Invalid credentials. Please check your username.');
+        try {
+            await login(email, password);
+        } catch (err) {
+            setError(err.message || 'Authentication failed. Please check your credentials.');
         }
     };
 
@@ -30,19 +26,23 @@ export default function Login() {
         <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
             <Card className="w-full max-w-md shadow-lg">
                 <CardHeader className="space-y-1">
-                    <CardTitle className="text-2xl font-bold text-center">Welcome back</CardTitle>
-                    <p className="text-center text-slate-500">Enter your credentials to access your account</p>
+                    <CardTitle className="text-2xl font-bold text-center">
+                        Welcome back
+                    </CardTitle>
+                    <p className="text-center text-slate-500">
+                        Enter your credentials to access your account
+                    </p>
                 </CardHeader>
                 <CardContent>
-                    <form onSubmit={handleLogin} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="username">Username</Label>
+                            <Label htmlFor="email">Email</Label>
                             <Input
-                                id="username"
-                                type="text"
-                                placeholder="e.g., Aarav Patel"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                id="email"
+                                type="email"
+                                placeholder="name@company.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 required
                             />
                         </div>
@@ -68,8 +68,8 @@ export default function Login() {
                         </Button>
                     </form>
                 </CardContent>
-                <CardFooter className="flex justify-center text-sm text-slate-500">
-                    <p>Demo: Use "Aarav Patel" as username and any password.</p>
+                <CardFooter className="flex flex-col items-center justify-center text-sm text-slate-500 space-y-2">
+                    <p>Contact your admin if you need an account.</p>
                 </CardFooter>
             </Card>
         </div>
