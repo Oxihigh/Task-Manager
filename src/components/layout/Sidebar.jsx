@@ -22,10 +22,7 @@ export function Sidebar() {
         <div className="w-64 border-r border-slate-200 bg-white flex flex-col h-screen fixed left-0 top-0 z-10">
             <div className="p-6">
                 <Link to="/" className="flex items-center gap-2 mb-8 hover:opacity-80 transition-opacity">
-                    <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white font-bold">
-                        T
-                    </div>
-                    <span className="text-xl font-bold text-slate-900">TaskFlow</span>
+                    <img src="/logo.png" alt="Bareddy's" className="h-10 w-auto" />
                 </Link>
 
                 <Button

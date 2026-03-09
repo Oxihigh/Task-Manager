@@ -25,12 +25,15 @@ export default function Login() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
             <Card className="w-full max-w-md shadow-lg">
-                <CardHeader className="space-y-1">
+                <CardHeader className="space-y-3">
+                    <div className="flex justify-center">
+                        <img src="/logo.png" alt="Bareddy's" className="h-14 w-auto" />
+                    </div>
                     <CardTitle className="text-2xl font-bold text-center">
                         Welcome back
                     </CardTitle>
                     <p className="text-center text-slate-500">
-                        Enter your credentials to access your account
+                        Sign in to your Bareddy's Task Manager account
                     </p>
                 </CardHeader>
                 <CardContent>
