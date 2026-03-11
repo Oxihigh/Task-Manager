@@ -7,22 +7,27 @@ export const taskApi = {
             .from('tasks')
             .select(`
                 *,
-                profiles (id, full_name, avatar),
                 task_assignees (
                     profile_id
                 )
             `)
             .order('created_at', { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+            console.error('Supabase getTasks error:', error);
+            throw error;
+        }
+
+        console.log('Raw tasks from Supabase:', data?.length, 'tasks');
 
         // Map data to match old structure expecting assigneeIds
-        return data.map(task => ({
+        return (data || []).map(task => ({
             ...task,
-            id: task.id.toString(), // Ensuring string IDs for frontend compatibility
+            id: task.id.toString(),
             assigneeIds: task.task_assignees ? task.task_assignees.map(ta => ta.profile_id) : [],
             createdBy: task.created_by,
             dueDate: task.due_date,
+            team: task.team || null,
         }));
     },
 
@@ -65,6 +70,7 @@ export const taskApi = {
                 priority: taskData.priority || 'Medium',
                 due_date: taskData.dueDate || null,
                 dependency_id: taskData.dependencyId || null,
+                team: taskData.team || null,
                 created_by: user.id
             }])
             .select()

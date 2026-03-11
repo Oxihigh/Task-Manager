@@ -3,7 +3,7 @@ import { cn } from "../../lib/utils";
 export function Card({ className, ...props }) {
     return (
         <div
-            className={cn("rounded-xl border border-slate-200 bg-white text-slate-950 shadow-sm", className)}
+            className={cn("rounded-2xl border border-slate-200/80 bg-white text-slate-950 shadow-card transition-shadow duration-300", className)}
             {...props}
         />
     );
@@ -16,7 +16,7 @@ export function CardHeader({ className, ...props }) {
 export function CardTitle({ className, ...props }) {
     return (
         <h3
-            className={cn("text-2xl font-semibold leading-none tracking-tight", className)}
+            className={cn("text-lg font-semibold leading-none tracking-tight text-slate-900", className)}
             {...props}
         />
     );

@@ -45,6 +45,15 @@ export function MemberCard({ user }) {
                         <div>
                             <h3 className="font-bold text-slate-900 group-hover:text-indigo-700 transition-colors duration-300">{user.name}</h3>
                             <p className="text-xs text-slate-500 group-hover:text-indigo-500 transition-colors duration-300">{user.role}</p>
+                            {user.team && (
+                                <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${user.team === 'Tech Team' ? 'bg-blue-100 text-blue-700' :
+                                        user.team === 'PR Team' ? 'bg-pink-100 text-pink-700' :
+                                            user.team === 'Business Development Team' ? 'bg-emerald-100 text-emerald-700' :
+                                                'bg-slate-100 text-slate-600'
+                                    }`}>
+                                    {user.team}
+                                </span>
+                            )}
                         </div>
                         <div className="ml-auto text-right">
                             {/* Completion badge on hover */}

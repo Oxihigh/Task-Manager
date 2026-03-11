@@ -118,14 +118,14 @@ export function TaskDetail({ taskId, onClose }) {
                         <h4 className="text-sm font-medium text-slate-500 mb-4">Activity & Comments</h4>
 
                         <div className="space-y-4 mb-4 max-h-80 overflow-y-auto">
-                            {task.logs.map((log, i) => (
+                            {(task.logs || []).map((log, i) => (
                                 <div key={i} className="text-xs text-slate-400">
-                                    <span className="font-medium text-slate-600">{users.find(u => u.id === log.userId)?.name || 'Unknown'}</span> {log.details} • {format(new Date(log.timestamp), 'MMM d, h:mm a')}
+                                    <span className="font-medium text-slate-600">{users.find(u => u.id === log.userId)?.name || 'Unknown'}</span> {log.details} • {log.timestamp ? format(new Date(log.timestamp), 'MMM d, h:mm a') : ''}
                                 </div>
                             ))}
 
                             {/* Render parent comments and their replies */}
-                            {task.comments
+                            {(task.comments || [])
                                 .filter(c => !c.parentId) // Get top-level comments
                                 .map((comment) => (
                                     <div key={comment.id} className="space-y-2">
@@ -137,7 +137,7 @@ export function TaskDetail({ taskId, onClose }) {
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-2 mb-1">
                                                     <span className="text-sm font-semibold text-slate-900">{users.find(u => u.id === comment.userId)?.name}</span>
-                                                    <span className="text-xs text-slate-400">{format(new Date(comment.timestamp), 'MMM d, h:mm a')}</span>
+                                                    <span className="text-xs text-slate-400">{comment.timestamp ? format(new Date(comment.timestamp), 'MMM d, h:mm a') : ''}</span>
                                                 </div>
                                                 <p className="text-sm text-slate-700" dangerouslySetInnerHTML={{
                                                     __html: comment.text.replace(/@(\w+)/g, '<span class="text-indigo-600 font-medium">@$1</span>')
@@ -173,7 +173,7 @@ export function TaskDetail({ taskId, onClose }) {
                                         )}
 
                                         {/* Replies (nested comments) */}
-                                        {task.comments
+                                        {(task.comments || [])
                                             .filter(c => c.parentId === comment.id)
                                             .map((reply) => (
                                                 <div key={reply.id} className="ml-8 bg-indigo-50/50 p-3 rounded-lg flex gap-3 border-l-2 border-indigo-200">
@@ -183,7 +183,7 @@ export function TaskDetail({ taskId, onClose }) {
                                                     <div>
                                                         <div className="flex items-center gap-2 mb-1">
                                                             <span className="text-sm font-semibold text-slate-900">{users.find(u => u.id === reply.userId)?.name}</span>
-                                                            <span className="text-xs text-slate-400">{format(new Date(reply.timestamp), 'MMM d, h:mm a')}</span>
+                                                            <span className="text-xs text-slate-400">{reply.timestamp ? format(new Date(reply.timestamp), 'MMM d, h:mm a') : ''}</span>
                                                         </div>
                                                         <p className="text-sm text-slate-700" dangerouslySetInnerHTML={{
                                                             __html: reply.text.replace(/@(\w+)/g, '<span class="text-indigo-600 font-medium">@$1</span>')

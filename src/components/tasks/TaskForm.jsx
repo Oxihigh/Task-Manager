@@ -18,7 +18,8 @@ export function TaskForm({ onClose }) {
         category: CATEGORIES[0],
         priority: 'Medium',
         assigneeIds: [],
-        dueDate: ''
+        dueDate: '',
+        team: ''
     });
 
     const handleSubmit = (e) => {
@@ -82,6 +83,37 @@ export function TaskForm({ onClose }) {
                 </div>
             </div>
 
+            <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                    <Label htmlFor="team">Team</Label>
+                    {formData.team && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                const teamMembers = users.filter(u => u.team === formData.team);
+                                const teamIds = teamMembers.map(u => u.id);
+                                const current = formData.assigneeIds || [];
+                                const merged = [...new Set([...current, ...teamIds])];
+                                setFormData({ ...formData, assigneeIds: merged });
+                            }}
+                            className="text-xs text-indigo-600 hover:underline font-medium"
+                        >
+                            Select Entire Team
+                        </button>
+                    )}
+                </div>
+                <Select
+                    id="team"
+                    value={formData.team}
+                    onChange={e => setFormData({ ...formData, team: e.target.value })}
+                >
+                    <option value="">No team</option>
+                    <option value="Tech Team">Tech Team</option>
+                    <option value="PR Team">PR Team</option>
+                    <option value="Business Development Team">Business Development Team</option>
+                </Select>
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                     <Label>Assign To</Label>
@@ -101,6 +133,13 @@ export function TaskForm({ onClose }) {
                                     className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                                 />
                                 <span>{u.name}</span>
+                                {u.team && (
+                                    <span className={`ml-auto text-[10px] px-1.5 py-0.5 rounded-full font-medium ${u.team === 'Tech Team' ? 'bg-blue-50 text-blue-600' :
+                                            u.team === 'PR Team' ? 'bg-pink-50 text-pink-600' :
+                                                u.team === 'Business Development Team' ? 'bg-emerald-50 text-emerald-600' :
+                                                    'bg-slate-50 text-slate-500'
+                                        }`}>{u.team.replace(' Team', '')}</span>
+                                )}
                             </label>
                         ))}
                     </div>

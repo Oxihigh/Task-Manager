@@ -12,7 +12,8 @@ export function MemberForm({ onClose }) {
         name: '',
         email: '',
         password: '',
-        role: 'Member'
+        role: 'Member',
+        team: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
@@ -176,6 +177,20 @@ export function MemberForm({ onClose }) {
                     <option value="Manager">Manager</option>
                     <option value="Admin">Admin</option>
                     <option value="Intern">Intern</option>
+                </Select>
+            </div>
+
+            <div className="space-y-2">
+                <Label htmlFor="team">Team</Label>
+                <Select
+                    id="team"
+                    value={formData.team}
+                    onChange={(e) => setFormData({ ...formData, team: e.target.value })}
+                >
+                    <option value="">Select a team</option>
+                    <option value="Tech Team">Tech Team</option>
+                    <option value="PR Team">PR Team</option>
+                    <option value="Business Development Team">Business Development Team</option>
                 </Select>
             </div>
 

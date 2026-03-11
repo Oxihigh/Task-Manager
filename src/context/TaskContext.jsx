@@ -52,8 +52,11 @@ export function TaskProvider({ children }) {
         try {
             const tasks = await taskApi.getTasks();
             dispatch({ type: 'SET_TASKS', payload: tasks });
+            dispatch({ type: 'SET_ERROR', payload: null });
         } catch (err) {
-            console.error('Fetch error:', err);
+            console.error('Fetch tasks error:', err);
+            dispatch({ type: 'SET_ERROR', payload: err.message || 'Failed to load tasks' });
+            dispatch({ type: 'SET_TASKS', payload: [] });
         }
     };
 
@@ -75,10 +78,21 @@ export function TaskProvider({ children }) {
     };
 
     const updateTaskStatus = async (taskId, newStatus) => {
+        const task = state.tasks.find(t => t.id === taskId);
+        if (!task) return;
+
+        const previousStatus = task.status;
+
+        // Optimistic update
+        dispatch({ type: 'UPDATE_TASK', payload: { ...task, status: newStatus } });
+
         try {
             const updated = await taskApi.updateTask(taskId, { status: newStatus });
+            // Update with any server-side changes (like new logs)
             dispatch({ type: 'UPDATE_TASK', payload: updated });
         } catch (err) {
+            // Revert on failure
+            dispatch({ type: 'UPDATE_TASK', payload: { ...task, status: previousStatus } });
             throw new Error(err.response?.data?.error || 'Failed to update status');
         }
     };

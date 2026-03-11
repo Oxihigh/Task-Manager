@@ -5,7 +5,13 @@ import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
-import { Send, Hash, UserCircle, MessageSquare } from 'lucide-react';
+import { Send, Hash, UserCircle, MessageSquare, ChevronDown, ChevronRight, Code2, Megaphone, Briefcase, Users } from 'lucide-react';
+
+const TEAM_CONFIG = {
+    'Tech Team': { icon: Code2, color: 'text-blue-600', bg: 'bg-blue-50' },
+    'PR Team': { icon: Megaphone, color: 'text-pink-600', bg: 'bg-pink-50' },
+    'Business Development Team': { icon: Briefcase, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+};
 
 export default function Chat() {
     const { currentUser, users } = useUser();
@@ -13,6 +19,7 @@ export default function Chat() {
     const [activeConvo, setActiveConvo] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const [collapsedTeams, setCollapsedTeams] = useState({});
     const messagesEndRef = useRef(null);
 
     // Initial Load
@@ -62,7 +69,6 @@ export default function Chat() {
                     filter: `conversation_id=eq.${activeConvo.id}`
                 },
                 async (payload) => {
-                    // When a new message arrives, we fetch the sender profile data
                     const { data: profile } = await supabase
                         .from('profiles')
                         .select('id, full_name, avatar')
@@ -73,7 +79,7 @@ export default function Chat() {
 
                     setMessages(prev => [...prev, enhancedMsg]);
                     scrollToBottom();
-                    loadConversations(); // Update timestamps on left panel
+                    loadConversations();
                 }
             )
             .subscribe();
@@ -87,10 +93,7 @@ export default function Chat() {
     const startConvoWith = async (userId) => {
         try {
             const convoId = await taskApi.getOrCreateDirectConversation(userId);
-            // Refresh conversation list so it appears
             await loadConversations();
-
-            // Set it as active
             setActiveConvo({ id: convoId });
         } catch (err) {
             console.error("Failed to start chat", err);
@@ -103,9 +106,8 @@ export default function Chat() {
 
         try {
             const text = newMessage;
-            setNewMessage(''); // clear input early for UX
+            setNewMessage('');
             await taskApi.sendMessage(activeConvo.id, text);
-            // The real-time subscription will automatically pull it in!
         } catch (err) {
             console.error(err);
         }
@@ -114,6 +116,20 @@ export default function Chat() {
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
+
+    const toggleTeam = (teamName) => {
+        setCollapsedTeams(prev => ({ ...prev, [teamName]: !prev[teamName] }));
+    };
+
+    // Group users by team for the directory
+    const otherUsers = users.filter(u => u.id !== currentUser?.id);
+    const teamGroups = {};
+    for (const team of ['Tech Team', 'PR Team', 'Business Development Team']) {
+        const members = otherUsers.filter(u => u.team === team);
+        if (members.length > 0) teamGroups[team] = members;
+    }
+    const unassigned = otherUsers.filter(u => !u.team);
+    if (unassigned.length > 0) teamGroups['Unassigned'] = unassigned;
 
     return (
         <div className="h-[calc(100vh-8rem)] flex gap-4">
@@ -158,23 +174,50 @@ export default function Chat() {
                         </div>
                     </div>
 
-                    {/* Team Directory to start new chats */}
+                    {/* Team Directory — grouped by team */}
                     <div>
                         <h3 className="px-4 text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Team Directory</h3>
                         <div className="space-y-1">
-                            {users.filter(u => u.id !== currentUser?.id).map(u => (
-                                <button
-                                    key={u.id}
-                                    onClick={() => startConvoWith(u.id)}
-                                    className="w-full text-left px-4 py-2 flex items-center gap-3 rounded-lg hover:bg-slate-100 text-slate-700 transition-colors group"
-                                >
-                                    <div className="w-6 h-6 rounded-full bg-slate-200 overflow-hidden shrink-0">
-                                        {u.avatar && <img src={u.avatar} alt={u.name} className="w-full h-full object-cover" />}
+                            {Object.entries(teamGroups).map(([teamName, members]) => {
+                                const config = TEAM_CONFIG[teamName];
+                                const Icon = config?.icon || Users;
+                                const isCollapsed = collapsedTeams[teamName];
+
+                                return (
+                                    <div key={teamName}>
+                                        <button
+                                            onClick={() => toggleTeam(teamName)}
+                                            className={`w-full text-left px-4 py-2 flex items-center gap-2 rounded-lg hover:bg-slate-50 transition-colors`}
+                                        >
+                                            {isCollapsed
+                                                ? <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+                                                : <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                                            }
+                                            <Icon className={`w-4 h-4 ${config?.color || 'text-slate-500'}`} />
+                                            <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider">{teamName}</span>
+                                            <span className="ml-auto text-[10px] font-semibold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-full">{members.length}</span>
+                                        </button>
+
+                                        {!isCollapsed && (
+                                            <div className="ml-4 space-y-0.5">
+                                                {members.map(u => (
+                                                    <button
+                                                        key={u.id}
+                                                        onClick={() => startConvoWith(u.id)}
+                                                        className="w-full text-left px-4 py-2 flex items-center gap-3 rounded-lg hover:bg-slate-100 text-slate-700 transition-colors group"
+                                                    >
+                                                        <div className="w-6 h-6 rounded-full bg-slate-200 overflow-hidden shrink-0">
+                                                            {u.avatar && <img src={u.avatar} alt={u.name} className="w-full h-full object-cover" />}
+                                                        </div>
+                                                        <p className="text-sm truncate">{u.name}</p>
+                                                        <MessageSquare className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 text-blue-500" />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
-                                    <p className="text-sm truncate">{u.name}</p>
-                                    <MessageSquare className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 text-blue-500" />
-                                </button>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
 
@@ -186,7 +229,6 @@ export default function Chat() {
                 {activeConvo ? (
                     <>
                         <div className="p-4 bg-white border-b border-slate-200 flex items-center gap-3">
-                            {/* Derive name from conversations array */}
                             {(() => {
                                 const c = conversations.find(c => c.id === activeConvo.id);
                                 const other = c?.participants[0];

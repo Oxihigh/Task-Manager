@@ -1,9 +1,23 @@
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTasks } from '../../context/TaskContext';
+import { useUser } from '../../context/UserContext';
 import { StatusBadge } from '../tasks/StatusBadge';
+import { Button } from '../ui/button';
+import { Select } from '../ui/select';
+import { MessageSquare, UserCog } from 'lucide-react';
+import { taskApi } from '../../api';
 
-export function MemberDetail({ member }) {
+export function MemberDetail({ member, onClose }) {
     const { tasks } = useTasks();
+    const { currentUser, updateUserTeam } = useUser();
+    const navigate = useNavigate();
+    const isAdmin = currentUser?.role === 'Admin';
+    const isSelf = currentUser?.id === member.id;
+
+    const [selectedTeam, setSelectedTeam] = useState(member.team || '');
+    const [savingTeam, setSavingTeam] = useState(false);
+    const [chatLoading, setChatLoading] = useState(false);
 
     const memberTasks = useMemo(() =>
         tasks.filter(t => t.assigneeId === member.id),
@@ -18,6 +32,31 @@ export function MemberDetail({ member }) {
         return { total, completed, pending, overdue, rate };
     }, [memberTasks]);
 
+    const handleTeamChange = async (newTeam) => {
+        setSelectedTeam(newTeam);
+        setSavingTeam(true);
+        try {
+            await updateUserTeam(member.id, newTeam);
+        } catch (err) {
+            console.error('Failed to update team:', err);
+        } finally {
+            setSavingTeam(false);
+        }
+    };
+
+    const handleChatClick = async () => {
+        setChatLoading(true);
+        try {
+            await taskApi.getOrCreateDirectConversation(member.id);
+            if (onClose) onClose();
+            navigate('/chat');
+        } catch (err) {
+            console.error('Failed to start chat:', err);
+        } finally {
+            setChatLoading(false);
+        }
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex items-center gap-4 border-b border-slate-100 pb-6">
@@ -26,16 +65,56 @@ export function MemberDetail({ member }) {
                     alt={member.name}
                     className="w-20 h-20 rounded-full bg-slate-100 border-2 border-slate-200"
                 />
-                <div>
+                <div className="flex-1">
                     <h2 className="text-2xl font-bold text-slate-900">{member.name}</h2>
-                    <div className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
                         <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-sm font-medium border border-slate-200">
                             {member.role}
                         </span>
-                        <span className="text-sm text-slate-500">ID: {member.id}</span>
+                        {member.team && (
+                            <span className={`px-2 py-0.5 rounded-full text-sm font-medium border ${member.team === 'Tech Team' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                    member.team === 'PR Team' ? 'bg-pink-50 text-pink-700 border-pink-200' :
+                                        member.team === 'Business Development Team' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                                            'bg-slate-50 text-slate-600 border-slate-200'
+                                }`}>
+                                {member.team}
+                            </span>
+                        )}
                     </div>
                 </div>
+                {/* Chat button — don't show for yourself */}
+                {!isSelf && (
+                    <Button
+                        variant="outline"
+                        className="gap-2 shrink-0"
+                        onClick={handleChatClick}
+                        disabled={chatLoading}
+                    >
+                        <MessageSquare className="w-4 h-4" />
+                        {chatLoading ? 'Opening...' : 'Chat'}
+                    </Button>
+                )}
             </div>
+
+            {/* Admin: Assign team */}
+            {isAdmin && (
+                <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <UserCog className="w-5 h-5 text-slate-500 shrink-0" />
+                    <span className="text-sm font-medium text-slate-700 shrink-0">Assign Team:</span>
+                    <Select
+                        value={selectedTeam}
+                        onChange={(e) => handleTeamChange(e.target.value)}
+                        className="flex-1"
+                        disabled={savingTeam}
+                    >
+                        <option value="">No team</option>
+                        <option value="Tech Team">Tech Team</option>
+                        <option value="PR Team">PR Team</option>
+                        <option value="Business Development Team">Business Development Team</option>
+                    </Select>
+                    {savingTeam && <span className="text-xs text-slate-400 animate-pulse">Saving...</span>}
+                </div>
+            )}
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">

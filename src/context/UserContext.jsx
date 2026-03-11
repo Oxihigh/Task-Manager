@@ -48,6 +48,7 @@ export function UserProvider({ children }) {
                     ...profile,
                     name: profile.name || profile.full_name || 'Unknown User',
                     role: profile.role || 'Member',
+                    team: profile.team || null,
                     avatar: profile.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name || profile.full_name || 'U')}&background=random`
                 };
                 setCurrentUser(normalizedProfile);
@@ -63,6 +64,7 @@ export function UserProvider({ children }) {
                     ...u,
                     name: u.name || u.full_name || 'Unknown User',
                     role: u.role || 'Member',
+                    team: u.team || null,
                     avatar: u.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name || u.full_name || 'U')}&background=random`
                 }));
                 setUsers(normalizedUsers);
@@ -168,6 +170,7 @@ export function UserProvider({ children }) {
                 .update({
                     full_name: userData.name,
                     role: userData.role || 'Member',
+                    team: userData.team || null,
                     avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=random`
                 })
                 .eq('id', newUserId);
@@ -181,8 +184,29 @@ export function UserProvider({ children }) {
         return signUpData;
     };
 
+    const updateUserTeam = async (userId, team) => {
+        const teamValue = team === '' ? null : team;
+
+        const { data, error, count } = await supabase
+            .from('profiles')
+            .update({ team: teamValue })
+            .eq('id', userId)
+            .select();
+
+        if (error) {
+            console.error('Supabase update error:', error);
+            throw error;
+        }
+
+        if (!data || data.length === 0) {
+            console.error('Update returned no rows — RLS policy may be blocking the update. Try adding an UPDATE policy for the profiles table.');
+        }
+
+        await fetchProfileAndUsers(currentUser.id);
+    };
+
     return (
-        <UserContext.Provider value={{ currentUser, users, login, logout, updateProfile, addUser, loading }}>
+        <UserContext.Provider value={{ currentUser, users, login, logout, updateProfile, addUser, updateUserTeam, loading }}>
             {!loading && children}
         </UserContext.Provider>
     );

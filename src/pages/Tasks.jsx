@@ -25,7 +25,7 @@ export default function Tasks() {
         return tasks.filter(task => {
             const matchesStatus = filter === 'All' ? true : task.status === filter;
             const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                task.description.toLowerCase().includes(searchQuery.toLowerCase());
+                (task.description || '').toLowerCase().includes(searchQuery.toLowerCase());
             return matchesStatus && matchesSearch;
         });
     }, [tasks, filter, searchQuery]);
@@ -162,6 +162,7 @@ export default function Tasks() {
                                     <th className="px-4 py-3 hidden md:table-cell">Status</th>
                                     <th className="px-4 py-3 hidden lg:table-cell">Priority</th>
                                     <th className="px-4 py-3 hidden sm:table-cell">Assignee(s)</th>
+                                    <th className="px-4 py-3 hidden lg:table-cell">Team</th>
                                     <th className="px-4 py-3 hidden md:table-cell">Due Date</th>
                                 </tr>
                             </thead>
@@ -203,14 +204,28 @@ export default function Tasks() {
                                             <td className="px-4 py-3 hidden sm:table-cell text-slate-600 truncate max-w-[150px]">
                                                 {getAssigneeNames(task.assigneeIds || [task.assigneeId])}
                                             </td>
+                                            <td className="px-4 py-3 hidden lg:table-cell">
+                                                {task.team ? (
+                                                    <span className={cn("px-2 py-0.5 rounded-full text-xs font-semibold",
+                                                        task.team === 'Tech Team' ? 'bg-blue-100 text-blue-700' :
+                                                            task.team === 'PR Team' ? 'bg-pink-100 text-pink-700' :
+                                                                task.team === 'Business Development Team' ? 'bg-emerald-100 text-emerald-700' :
+                                                                    'bg-slate-100 text-slate-600'
+                                                    )}>
+                                                        {task.team}
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-slate-400 text-xs">—</span>
+                                                )}
+                                            </td>
                                             <td className="px-4 py-3 hidden md:table-cell text-slate-500 whitespace-nowrap">
-                                                {format(new Date(task.dueDate), 'MMM d, yyyy')}
+                                                {task.dueDate ? format(new Date(task.dueDate), 'MMM d, yyyy') : '—'}
                                             </td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className="px-4 py-12 text-center text-slate-500">
+                                        <td colSpan="7" className="px-4 py-12 text-center text-slate-500">
                                             No tasks found matching your criteria.
                                         </td>
                                     </tr>
