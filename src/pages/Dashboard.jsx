@@ -17,11 +17,11 @@ export default function Dashboard() {
         const inProgress = tasks.filter(t => t.status === 'In Progress').length;
         const overdue = tasks.filter(t => new Date(t.dueDate) < new Date() && t.status !== 'Completed').length;
         const highPriority = tasks.filter(t => t.priority === 'High' || t.priority === 'Urgent').length;
-        const myTasks = tasks.filter(t => t.assigneeId === currentUser.id && t.status !== 'Completed').length;
+        const myTasks = tasks.filter(t => (t.assigneeIds || []).includes(currentUser.id) && t.status !== 'Completed').length;
 
         const workload = users.map(u => ({
             name: u.name,
-            count: tasks.filter(t => t.assigneeId === u.id && t.status !== 'Completed').length,
+            count: tasks.filter(t => (t.assigneeIds || []).includes(u.id) && t.status !== 'Completed').length,
             avatar: u.avatar
         })).sort((a, b) => b.count - a.count);
 
